@@ -57,6 +57,8 @@ async def generate_thumbnail(image: UploadFile = File(...)):
     # Reshape the bands into an RGB image
     image_data = np.transpose(bands, (1, 2, 0))
 
+    # Normalize the pixel values to the range [0, 255]
+    image_data = (image_data / image_data.max()) * 255
     # Convert the RGB image to PIL Image
     image_pil = Image.fromarray(np.uint8(image_data))
    
@@ -74,13 +76,21 @@ async def generate_thumbnail2(image: UploadFile = File(...)):
 
     # Open the image using rasterio
     with rasterio.open(image_path) as dataset:
-        # Read the image bands
-        red_band = dataset.read(4)  # Red band
-        green_band = dataset.read(3)  # Green band
-        blue_band = dataset.read(2)  # Blue band
-    
-    # Combine the bands into an RGB image
-    rgb_image = np.dstack((red_band, green_band, blue_band))
+        # Read the three RGB bands (e.g., bands 4, 3, and 2)
+        rgb_bands = dataset.read([4, 3, 2])
+
+    # Normalize the pixel values to the range [0, 1]
+    rgb_bands = rgb_bands / 10000.0
+
+    # Clip values exceeding the valid range [0, 1]
+    rgb_bands = np.clip(rgb_bands, 0, 1)
+
+    # Reshape the RGB bands into an RGB image
+    rgb_image = np.transpose(rgb_bands, (1, 2, 0))
+
+    # Scale the pixel values to the range [0, 255]
+    rgb_image = (rgb_image * 255).astype(np.uint8)
+
 
     # Convert the image to PIL Image
     image_pil = Image.fromarray(rgb_image.astype(np.uint8))

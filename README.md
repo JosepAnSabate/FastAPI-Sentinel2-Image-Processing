@@ -23,7 +23,7 @@ This repository contains a basic FastAPI application for processing Sentinel-2 s
 - **Method:** POST
 - **Description:** Generate a thumbnail image from a Sentinel-2 image file as a PNG.
 
-### Generate Thumbnail Image
+### Generate a **Brighter** Thumbnail Image 
 
 - **Endpoint:** `/thumbnail2/`
 - **Method:** POST
